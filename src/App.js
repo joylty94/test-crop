@@ -54,6 +54,16 @@ function App() {
 	// 	}
 	// };
 
+	const downloadURI = (uri, name = '금쪽같은 댕냥이') => {
+		var link = document.createElement('a');
+		link.download = name;
+		link.href = uri;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		// delete link;
+	};
+
 	const getCroppedImg = (sourceImage, crop, fileName = 'newFile.jpeg') => {
 		const canvas = document.createElement('canvas');
 		console.log('!!!!!!!', sourceImage.naturalWidth);
@@ -155,6 +165,13 @@ function App() {
 					}}
 				>
 					crop
+				</button>
+				<button
+					onClick={() => {
+						if (srcCrop) downloadURI(srcCrop);
+					}}
+				>
+					download
 				</button>
 			</header>
 		</div>
