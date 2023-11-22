@@ -115,12 +115,12 @@ const Home = () => {
 export default Home;
 
 const HomeWrap = styled.div`
-	@media (prefers-dark-interface) {
-		color: white;
-		background: black;
-	}
-
 	${({ theme }) => (theme === 'dark' ? 'color: #fff;' : 'color: #000;')};
+
+	@media (max-width: 470px) {
+		width: 100%;
+		padding: 60px 15px 0 15px;
+	}
 	padding-top: 60px;
 	width: 470px;
 	margin: 0 auto;
