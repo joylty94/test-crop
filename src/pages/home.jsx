@@ -115,8 +115,6 @@ const Home = () => {
 export default Home;
 
 const HomeWrap = styled.div`
-	${({ theme }) => (theme === 'dark' ? 'color: #fff;' : 'color: #000;')};
-
 	@media (max-width: 470px) {
 		width: 100%;
 		padding: 60px 15px 0 15px;
@@ -171,6 +169,7 @@ const HomeWrap = styled.div`
 		font-size: 18px;
 		width: 60px;
 		height: 40px;
+		border: 1px solid rgba(118, 118, 118, 0.3);
 	}
 	.Home__action-history p {
 		margin-bottom: 10px;
