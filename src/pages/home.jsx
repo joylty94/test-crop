@@ -2,10 +2,16 @@ import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import styled from 'styled-components';
 
 const PROBLEM = [
-	'데모 게임 시작입니다',
-	'문제를 빨리 작성해보세요',
-	'정답은 ㅁㅁ 입니다',
-	'종료 문제 입니다',
+	'업무지시는 명확하게. 회의는 간결하게. 질문은 자유롭게 해요.',
+	'어려운 일 있어요? 말 한마디가 우리문화를 바꿔요.',
+	'교육은 서로를 든든한 업무파트너로 만드는 지름길, 적극 권장해요.',
+	'보고 또 봐도 그 보고에요.',
+	'근무는 유연하게, 업무는 확실하게 해내요.',
+	"쏘지 마세요. 같은 편이에요. 우리의 조직은 팀이 아니라 '현대제철' 이에요.",
+	'문제 발생시 네 탓 보단 문제인식과 대안마련으로 함께 해결해요.',
+	'안전만큼은 참견과 참여가 항상 참이에요.',
+	'솔선수범, 우리 모두의 역할이에요.',
+	'과거 해오던 방식은 참고만 하세요. 새로운 접근은 변화의 시작이에요.',
 ];
 
 const Home = () => {
@@ -54,6 +60,21 @@ const Home = () => {
 		}
 	};
 
+	const onClickKeyPress = (e) => {
+		if (PROBLEM[problemIndex] === text) {
+			// @ts-ignore
+			setProblemHistory((prev) => [...prev, `${text} - ${time}초 성공`]);
+			setText('');
+			setTime(0);
+			if (PROBLEM.length - 1 > problemIndex) {
+				setProblemIndex((prev) => prev + 1);
+			} else {
+				setAction(false);
+				clearInterval(timer?.current);
+			}
+		}
+	};
+
 	useEffect(() => {
 		const editor = document.getElementById('editor');
 		if (!action) {
@@ -74,7 +95,10 @@ const Home = () => {
 	return (
 		// @ts-ignore
 		<HomeWrap theme={initTheme}>
-			<h1>Demo Game</h1>
+			<div>
+				<span>현대제철이 제철이네!</span>
+				<h1>제철 레시피</h1>
+			</div>
 			<div>
 				<div>
 					<div className='Home__place'>
@@ -94,7 +118,7 @@ const Home = () => {
 							onKeyPress={handleKeyPress}
 							placeholder='준비하시고~'
 						/>
-						{/* <button>확인</button> */}
+						<button onClick={onClickKeyPress}>입력</button>
 					</div>
 				</div>
 				<div className='Home__action'>
@@ -132,6 +156,11 @@ const HomeWrap = styled.div`
 	.Home__place {
 		margin-bottom: 24px;
 		font-size: 28px;
+		-webkit-touch-callout: none;
+		user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		-webkit-user-select: none;
 	}
 
 	.Home__editor {
@@ -150,6 +179,7 @@ const HomeWrap = styled.div`
 		width: 64px;
 		height: 45px;
 		font-size: 18px;
+		border: 1px solid rgba(118, 118, 118, 0.3);
 	}
 
 	.Home__action {
