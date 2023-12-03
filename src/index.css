@@ -5,6 +5,13 @@
 	font-style: normal;
 }
 
+@font-face {
+	font-family: 'Pretendard';
+	src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+	font-weight: 900;
+	font-style: normal;
+}
+
 * {
 	box-sizing: border-box;
 }
@@ -231,8 +238,7 @@ audio,
 canvas,
 video {
 	display: inline-block;
-	*display: inline;
-	*zoom: 1;
+
 	max-width: 100%;
 }
 
@@ -378,8 +384,7 @@ textarea {
 	margin: 0;
 	/* 2 */
 	vertical-align: baseline;
-	/* 3 */
-	*vertical-align: middle;
+
 	/* 3 */
 }
 
@@ -449,10 +454,7 @@ input[type='radio'] {
 	box-sizing: border-box;
 	/* 1 */
 	padding: 0;
-	/* 2 */
-	*height: 13px;
-	/* 3 */
-	*width: 13px;
+
 	/* 3 */
 }
 

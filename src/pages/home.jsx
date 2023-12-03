@@ -22,6 +22,7 @@ const Home = () => {
 
 	const [action, setAction] = useState(false); // start, end
 	const [time, setTime] = useState(0);
+	const [totalTime, setTotalTime] = useState(0);
 	const [text, setText] = useState('');
 
 	const timer = useRef();
@@ -34,7 +35,8 @@ const Home = () => {
 			if (!prev) {
 				setProblemHistory([]);
 			}
-			return !prev;
+			// return !prev;
+			return true;
 		});
 	};
 
@@ -47,7 +49,10 @@ const Home = () => {
 		if (e.key === 'Enter') {
 			if (PROBLEM[problemIndex] === text) {
 				// @ts-ignore
-				setProblemHistory((prev) => [...prev, `${text} - ${time}초 성공`]);
+				setProblemHistory((prev) => [
+					...prev,
+					{ content: `${text} - ${time}초 성공`, time },
+				]);
 				setText('');
 				setTime(0);
 				if (PROBLEM.length - 1 > problemIndex) {
@@ -63,7 +68,10 @@ const Home = () => {
 	const onClickKeyPress = (e) => {
 		if (PROBLEM[problemIndex] === text) {
 			// @ts-ignore
-			setProblemHistory((prev) => [...prev, `${text} - ${time}초 성공`]);
+			setProblemHistory((prev) => [
+				...prev,
+				{ content: `${text} - ${time}초 성공`, time },
+			]);
 			setText('');
 			setTime(0);
 			if (PROBLEM.length - 1 > problemIndex) {
@@ -73,6 +81,18 @@ const Home = () => {
 				clearInterval(timer?.current);
 			}
 		}
+	};
+
+	const timeFormat = (seconds) => {
+		let hours = Math.floor(seconds / 3600);
+		let minutes = Math.floor((seconds % 3600) / 60);
+		let remainingSeconds = seconds % 60;
+
+		let hoursFormatted = hours.toString().padStart(2, '0');
+		let minutesFormatted = minutes.toString().padStart(2, '0');
+		let secondsFormatted = remainingSeconds.toString().padStart(2, '0');
+
+		return `${hoursFormatted}:${minutesFormatted}:${secondsFormatted}`;
 	};
 
 	useEffect(() => {
@@ -92,19 +112,26 @@ const Home = () => {
 		};
 	}, [action]);
 
+	useEffect(() => {
+		setTotalTime(
+			problemHistory?.reduce((acc, p) => {
+				acc = acc + p.time;
+				return acc;
+			}, 0) ?? 0
+		);
+	}, [problemHistory]);
+
 	return (
 		// @ts-ignore
 		<HomeWrap theme={initTheme}>
-			<div>
-				<span>현대제철이 제철이네!</span>
-				<h1>제철 레시피</h1>
-				{/* <img alt="제철 레시피" src="/title.jpeg"> */}
+			<div className='Home_title'>
+				<img alt='제철 레시피' src='/title.png' />
 			</div>
 			<div>
 				<div>
 					<div className='Home__place'>
 						{!action ? (
-							<p>시작을 눌러주세요</p>
+							<p onClick={onClickAction}>start!</p>
 						) : (
 							<p>{PROBLEM[problemIndex]}</p>
 						)}
@@ -118,22 +145,31 @@ const Home = () => {
 							onChange={onChangeText}
 							onKeyPress={handleKeyPress}
 							placeholder='준비하시고~'
+							autocomplete='off'
 						/>
 						<button onClick={onClickKeyPress}>입력</button>
 					</div>
 				</div>
+
 				<div className='Home__action'>
+					<div className='Home__action-left'>
+						<div className='Home__action-time'>{timeFormat(totalTime)}</div>
+						<button>Total</button>
+					</div>
 					<div className='Home__action-right'>
-						<div className='Home__action-time'>{time} 초</div>
-						<button onClick={onClickAction}>{!action ? '시작' : '종료'}</button>
+						<div className='Home__action-time'>{timeFormat(time)}</div>
+						{/* <button onClick={onClickAction}>{!action ? '시작' : '종료'}</button> */}
+						<button>Lap</button>
 					</div>
 				</div>
 
 				<div className='Home__action-history'>
 					{problemHistory.length > 0 &&
-						problemHistory.map((p, i) => <p key={'문제' + i}>{p}</p>)}
+						problemHistory.map((p, i) => <p key={'문제' + i}>{p.content}</p>)}
 				</div>
 			</div>
+
+			<img className='Homg__back' alt='백그라운드' src='/bg.png' />
 		</HomeWrap>
 	);
 };
@@ -144,19 +180,31 @@ const HomeWrap = styled.div`
 		width: 100%;
 		padding: 60px 15px 0 15px;
 	}
-	padding-top: 60px;
-	width: 470px;
+	/* padding-top: 60px; */
+	width: 540px;
+	min-height: 100vh;
 	margin: 0 auto;
 	text-align: center;
+	position: relative;
 
-	h1 {
-		font-size: 50px;
-		margin-bottom: 42px;
+	.Home_title {
+		width: 540px;
+		height: 200px;
+		position: relative;
+		overflow: hidden;
+		> img {
+			position: absolute;
+			top: -140px;
+			left: 50%;
+			transform: translateX(-50%);
+		}
 	}
 
 	.Home__place {
 		margin-bottom: 24px;
 		font-size: 28px;
+		height: 73px;
+		line-height: 1.3;
 		-webkit-touch-callout: none;
 		user-select: none;
 		-moz-user-select: none;
@@ -173,7 +221,9 @@ const HomeWrap = styled.div`
 		font-size: 20px;
 		flex: 1;
 		padding-left: 10px;
+		padding-right: 6px;
 		margin-bottom: 24px;
+		border: 1px solid rgba(118, 118, 118, 0.3);
 	}
 
 	.Home__editor button {
@@ -184,25 +234,50 @@ const HomeWrap = styled.div`
 	}
 
 	.Home__action {
+		position: relative;
 		margin-bottom: 24px;
 		display: flex;
-		flex-direction: row-reverse;
+		z-index: 100;
+		gap: 40px;
 	}
-	.Home__action-right {
+	.Home__action-left {
+		flex: 1;
 		display: flex;
 		align-items: center;
+		justify-content: flex-end;
+	}
+	.Home__action-right {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
 	}
 	.Home__action-time {
-		font-size: 20px;
-		margin-right: 18px;
+		font-family: 'Pretendard', sans-serif !important;
+		font-weight: 900;
+		font-size: 44px;
 	}
 	.Home__action button {
 		font-size: 18px;
 		width: 60px;
 		height: 40px;
 		border: 1px solid rgba(118, 118, 118, 0.3);
+		margin-left: 10px;
+		background-color: #093d8b;
+		color: #fff;
+		border: 1px solid #162e61;
 	}
 	.Home__action-history p {
 		margin-bottom: 10px;
+	}
+
+	.Homg__back {
+		position: absolute;
+		bottom: 170px;
+		right: -400px;
+		z-index: 0;
+	}
+	img {
+		-webkit-user-drag: none;
 	}
 `;
