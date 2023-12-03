@@ -98,6 +98,7 @@ const Home = () => {
 			<div>
 				<span>현대제철이 제철이네!</span>
 				<h1>제철 레시피</h1>
+				{/* <img alt="제철 레시피" src="/title.jpeg"> */}
 			</div>
 			<div>
 				<div>
