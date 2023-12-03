@@ -131,7 +131,12 @@ const Home = () => {
 				<div>
 					<div className='Home__place'>
 						{!action ? (
-							<p onClick={onClickAction}>start!</p>
+							<button
+								onClick={onClickAction}
+								class='Home__place-action custom-btn btn-2'
+							>
+								Start!
+							</button>
 						) : (
 							<p>{PROBLEM[problemIndex]}</p>
 						)}
@@ -192,6 +197,7 @@ const HomeWrap = styled.div`
 		height: 200px;
 		position: relative;
 		overflow: hidden;
+		margin-bottom: 8px;
 		> img {
 			position: absolute;
 			top: -140px;
@@ -202,14 +208,22 @@ const HomeWrap = styled.div`
 
 	.Home__place {
 		margin-bottom: 24px;
-		font-size: 28px;
 		height: 73px;
+	}
+	.Home__place > p {
+		font-size: 28px;
 		line-height: 1.3;
 		-webkit-touch-callout: none;
 		user-select: none;
 		-moz-user-select: none;
 		-ms-user-select: none;
 		-webkit-user-select: none;
+	}
+
+	.Home__place .Home__place-action {
+		cursor: pointer;
+		font-size: 18px;
+		line-height: 1.3;
 	}
 
 	.Home__editor {
@@ -279,5 +293,46 @@ const HomeWrap = styled.div`
 	}
 	img {
 		-webkit-user-drag: none;
+	}
+
+	.custom-btn {
+		width: 130px;
+		height: 40px;
+		color: #fff;
+		/* border-radius: 5px; */
+		padding: 10px 25px;
+		font-family: 'Lato', sans-serif;
+		font-weight: 500;
+		background: transparent;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		position: relative;
+		display: inline-block;
+		box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+			7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+		outline: none;
+	}
+
+	/* 2 */
+	.btn-2 {
+		/* background: rgb(96, 9, 240); */
+		background: #093d8b;
+		/* background: linear-gradient(
+			0deg,
+			rgba(96, 9, 240, 1) 0%,
+			rgba(129, 5, 240, 1) 100%
+		); */
+		/* background: linear-gradient(0deg, #093d8b 0%, rgba(96, 9, 240, 1) 100%); */
+		border: none;
+	}
+	.btn-2:before {
+		height: 0%;
+		width: 2px;
+	}
+	.btn-2:hover {
+		box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.5),
+			-4px -4px 6px 0 rgba(116, 125, 136, 0.5),
+			inset -4px -4px 6px 0 rgba(255, 255, 255, 0.2),
+			inset 4px 4px 6px 0 rgba(0, 0, 0, 0.4);
 	}
 `;
