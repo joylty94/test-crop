@@ -100,10 +100,12 @@ const Home = () => {
 		if (!action) {
 			if (timer?.current) clearInterval(timer?.current);
 			setTime(0);
+			setTotalTime(0);
 			setProblemIndex(0);
 		} else {
 			timer.current = setInterval(() => {
 				setTime((prev) => prev + 1);
+				setTotalTime((prev) => prev + 1);
 			}, 1000);
 			editor.focus();
 		}
@@ -111,15 +113,6 @@ const Home = () => {
 			if (timer?.current) clearInterval(timer?.current);
 		};
 	}, [action]);
-
-	useEffect(() => {
-		setTotalTime(
-			problemHistory?.reduce((acc, p) => {
-				acc = acc + p.time;
-				return acc;
-			}, 0) ?? 0
-		);
-	}, [problemHistory]);
 
 	return (
 		// @ts-ignore
@@ -308,8 +301,10 @@ const HomeWrap = styled.div`
 		transition: all 0.3s ease;
 		position: relative;
 		display: inline-block;
-		box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
-			7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+		box-shadow:
+			inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+			7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+			4px 4px 5px 0px rgba(0, 0, 0, 0.1);
 		outline: none;
 	}
 
@@ -330,7 +325,8 @@ const HomeWrap = styled.div`
 		width: 2px;
 	}
 	.btn-2:hover {
-		box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.5),
+		box-shadow:
+			4px 4px 6px 0 rgba(255, 255, 255, 0.5),
 			-4px -4px 6px 0 rgba(116, 125, 136, 0.5),
 			inset -4px -4px 6px 0 rgba(255, 255, 255, 0.2),
 			inset 4px 4px 6px 0 rgba(0, 0, 0, 0.4);
