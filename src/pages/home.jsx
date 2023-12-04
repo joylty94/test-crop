@@ -2,11 +2,29 @@ import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import styled from 'styled-components';
 
 const PROBLEM = [
-	'업무지시는 명확하게. 회의는 간결하게. 질문은 자유롭게 해요.',
+	'업무지시는 명확하게, 회의는 간결하게, 질문은 자유롭게 해요.',
 	'어려운 일 있어요? 말 한마디가 우리문화를 바꿔요.',
 	'교육은 서로를 든든한 업무파트너로 만드는 지름길, 적극 권장해요.',
-	'보고 또 봐도 그 보고에요.',
+	'보고 또 봐도 그 보고예요.',
 	'근무는 유연하게, 업무는 확실하게 해내요.',
+	"쏘지 마세요. 같은 편이에요. 우리의 조직은 팀이 아니라 '현대제철' 이에요.",
+	'문제 발생시 네 탓 보단 문제인식과 대안마련으로 함께 해결해요.',
+	'안전만큼은 참견과 참여가 항상 참이에요.',
+	'솔선수범, 우리 모두의 역할이에요.',
+	'과거 해오던 방식은 참고만 하세요. 새로운 접근은 변화의 시작이에요.',
+];
+
+const TPROBLEM = [
+	/^(?:[ㅇ어업])?(?:[ㅁ무])?(?:[ㅈ지])?(?:[ㅅ시])?(?:[ㄴ느는])?(?:\s)?(?:[ㅁ며명])?(?:[ㅎ호화확])?(?:[ㅎ하])?(?:[ㄱ게])?(?:[,])?(?:\s)?(?:[ㅎ호회])?(?:[ㅇ으의])?(?:[ㄴ느는])?(?:\s)?(?:[ㄱ가간])?(?:[ㄱ겨결])?(?:[ㅎ하])?(?:[ㄱ게])?(?:[,])?(?:\s)?(?:[ㅈ지질])?(?:[ㅁ무문])?(?:[ㅇ으은])?(?:\s)?(?:[ㅈ자])?(?:[ㅇ유])?(?:[ㄹ로롭])?(?:[ㄱ게])?(?:\s)?(?:[ㅎ해])?(?:[ㅇ요])?(?:[.])?$/,
+
+	/^(?:[ㅇ어])?(?:[ㄹ려])?(?:[ㅇ우운])?(?:\s)?(?:[ㅇ이일])?(?:\s)?(?:[ㅇ이있])?(?:[ㅇ어])?(?:[ㅇ요])?(?:[?])?(?:\s)?(?:[ㅁ마말])?(?:\s)?(?:[ㅎ하한])?(?:[ㅁ마])?(?:[ㄷ디])?(?:[ㄱ가])?(?:\s)?(?:[ㅇ우])?(?:[ㄹ리])?(?:[ㅁ무문])?(?:[ㅎ호화])?(?:[ㄹ르를])?(?:\s)?(?:[ㅂ바])?(?:[ㄲ꾸꿔])?(?:[ㅇ요])?(?:[.])?$/,
+
+	/^(?:[ㄱ교])?(?:[ㅇ유육])?(?:[ㅇ으은])?(?:\s)?(?:[ㅅ서])?(?:[ㄹ로])?(?:[ㄹ르를])?(?:\s)?(?:[ㄷ드든])?(?:[ㄷ드든])?(?:[ㅎ하한])?(?:\s)?(?:[ㅇ어업])?(?:[ㅁ무])?(?:[ㅍ파])?(?:[ㅌ트])?(?:[ㄴ너])?(?:[ㄹ로])?(?:\s)?(?:[ㅁ마만])?(?:[ㄷ드])?(?:[ㄴ느는])?(?:\s)?(?:[ㅈ지])?(?:[ㄹ르름])?(?:[ㄱ기길])?(?:[,])?(?:\s)?(?:[ㅈ저적])?(?:[ㄱ그극])?(?:\s)?(?:[ㄱ구궈권])?(?:[ㅈ자장])?(?:[ㅎ해])?(?:[ㅇ요])?(?:[.])?$/,
+
+	/^(?:[ㅂ보])?(?:[ㄱ고])?(?:\s)?(?:[ㄸ또])?(?:\s)?(?:[ㅂ보봐])?(?:[ㄷ도])?(?:\s)?(?:[ㄱ그])?(?:\s)?(?:[ㅂ보])?(?:[ㄱ고])?(?:[ㅇ예])?(?:[ㅇ요])?(?:[.])?$/,
+
+	/^(?:[ㄱ그근])?(?:[ㅁ무])?(?:[ㄴ느는])?(?:\s)?(?:[ㅇ유])?(?:[ㅇ여연])?(?:[ㅎ하])?(?:[ㄱ게])?(?:[,])?(?:\s)?(?:[ㅇ어업])?(?:[ㅁ무])?(?:[ㄴ느는])?(?:\s)?(?:[ㅎ호화확])?(?:[ㅅ시실])?(?:[ㅎ하])?(?:[ㄱ게])?(?:\s)?(?:[ㅎ해])?(?:[ㄴ내])?(?:[ㅇ요])?(?:[.])?$/,
+
 	"쏘지 마세요. 같은 편이에요. 우리의 조직은 팀이 아니라 '현대제철' 이에요.",
 	'문제 발생시 네 탓 보단 문제인식과 대안마련으로 함께 해결해요.',
 	'안전만큼은 참견과 참여가 항상 참이에요.',
@@ -24,11 +42,47 @@ const Home = () => {
 	const [time, setTime] = useState(0);
 	const [totalTime, setTotalTime] = useState(0);
 	const [text, setText] = useState('');
+	const [textError, setTextError] = useState(false);
 
 	const timer = useRef();
 
 	const [problemIndex, setProblemIndex] = useState(0);
 	const [problemHistory, setProblemHistory] = useState([]);
+
+	const decomposeHangul = (char) => {
+		const baseCode = char.charCodeAt(0) - 0xac00;
+		const jongseongBase = 28;
+		const jungseongBase = 21;
+
+		const jongseong = baseCode % jongseongBase;
+		const jungseong = ((baseCode - jongseong) / jongseongBase) % jungseongBase;
+		const choseong =
+			((baseCode - jongseong) / jongseongBase - jungseong) / jungseongBase;
+
+		return [choseong, jungseong, jongseong];
+	};
+
+	const compareHangul = (char1, char2) => {
+		console.log(char1, char2);
+		const [choseong1, jungseong1, jongseong1] = decomposeHangul(char1);
+		const [choseong2, jungseong2, jongseong2] = decomposeHangul(char2);
+		console.log(choseong1, jungseong1, jongseong1);
+		console.log(choseong2, jungseong2, jongseong2);
+
+		// if (choseong1 && choseong2) {
+		// 	return choseong1 !== choseong2;
+		// }
+		if (choseong1 === -53) {
+			return false;
+		}
+		if (jongseong1 && (jongseong2 || jongseong2 === 0)) {
+			console.log(jongseong1, jongseong2);
+			return jongseong1 !== jongseong2;
+		}
+		if ((jungseong1 || jungseong1 === 0) && (jungseong2 || jungseong2 === 0)) {
+			return jungseong1 !== jungseong2;
+		}
+	};
 
 	const onClickAction = () => {
 		setAction((prev) => {
@@ -41,7 +95,15 @@ const Home = () => {
 	};
 
 	const onChangeText = (e) => {
+		// console.log(e.nativeEvent);
 		const value = e.target.value;
+		// console.log(
+		// 	'value !== PROBLEM[problemIndex].slice(0, value.length)',
+		// 	value !== PROBLEM[problemIndex].slice(0, value.length)
+		// );
+
+		setTextError(!TPROBLEM[problemIndex].test(value));
+
 		setText(value);
 	};
 
@@ -126,7 +188,7 @@ const Home = () => {
 						{!action ? (
 							<button
 								onClick={onClickAction}
-								class='Home__place-action custom-btn btn-2'
+								className='Home__place-action custom-btn btn-2'
 							>
 								Start!
 							</button>
@@ -135,7 +197,7 @@ const Home = () => {
 						)}
 					</div>
 
-					<div className='Home__editor'>
+					<div className={textError ? 'Home__editor error' : 'Home__editor'}>
 						<input
 							id='editor'
 							disabled={!action}
@@ -143,10 +205,16 @@ const Home = () => {
 							onChange={onChangeText}
 							onKeyPress={handleKeyPress}
 							placeholder='준비하시고~'
-							autocomplete='off'
+							autoComplete='off'
 						/>
 						<button onClick={onClickKeyPress}>입력</button>
 					</div>
+					{textError && (
+						<div className='Home__text-error'>
+							<div>오. 타. 발. 생.</div>
+							<p>내용을 다시 살펴 보세요!</p>
+						</div>
+					)}
 				</div>
 
 				<div className='Home__action'>
@@ -221,6 +289,13 @@ const HomeWrap = styled.div`
 
 	.Home__editor {
 		display: flex;
+
+		&.error input {
+			border: 1px solid #c10015;
+		}
+		&.error button {
+			border: 1px solid #c10015;
+		}
 	}
 
 	.Home__editor input {
@@ -286,6 +361,12 @@ const HomeWrap = styled.div`
 	}
 	img {
 		-webkit-user-drag: none;
+	}
+
+	.Home__text-error {
+		color: #fdda40;
+		margin-bottom: 24px;
+		font-size: 28px;
 	}
 
 	.custom-btn {
