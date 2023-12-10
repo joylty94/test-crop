@@ -12,6 +12,12 @@
 	font-style: normal;
 }
 
+	.ReactModalPortal .ReactModal__Overlay {
+		z-index: 1000;
+		background: rgba(0, 0, 0, 0.75) !important;
+	}
+
+
 * {
 	box-sizing: border-box;
 }
@@ -36,7 +42,7 @@ body {
 	left: 0;
 	line-height: 1;
 	/* letter-spacing: 0; */
-	color: #000;
+	color: #333;
 }
 
 #root {
