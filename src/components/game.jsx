@@ -232,9 +232,7 @@ const Home = ({ user }) => {
 								onChange={onChangeText}
 								onKeyPress={handleKeyPress}
 								placeholder={
-									!action
-										? '준비하고, START를 눌러주세요.'
-										: '제철 레시피를 입력해주세요.'
+									!action ? '준비하시고~' : '제철 레시피를 입력해주세요.'
 								}
 								autoComplete='off'
 							/>

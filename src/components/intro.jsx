@@ -42,10 +42,8 @@ const Intro = ({ user, setUser, setMode }) => {
 				<li>빠른 타자는 이번게임의 필수조건!</li>
 				<li>아래 이름과 사번 작성 후 입장!</li>
 				<li>오타, 띄어쓰기까지 확실하게 써야 해요!</li>
-				<li>
-					도전 횟수는 무제한 !! <br />
-					최고 빠른 Best lap을 캡쳐 or 폰으로 촬영하여 접수!
-				</li>
+				<li>도전 횟수는 무제한 !!</li>
+				<li>완료후에는 "다운로드"를 통해 기록을 저장하여 이벤트 응모!!</li>
 			</ul>
 
 			<div className='Intro__edit'>
