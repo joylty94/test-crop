@@ -6,15 +6,15 @@ import { getGoogleSheet } from '../libs/googlesheet.js';
 
 const PROBLEM = [
 	'업무지시는 명확하게, 회의는 간결하게, 질문은 자유롭게 해요.',
-	'어려운 일 있어요? 말 한마디가 우리문화를 바꿔요.',
-	'교육은 서로를 든든한 업무파트너로 만드는 지름길, 적극 권장해요.',
-	'보고 또 봐도 그 보고예요.',
-	'근무는 유연하게, 업무는 확실하게 해내요.',
-	"쏘지 마세요. 같은 편이에요. 우리의 조직은 팀이 아니라 '현대제철' 이에요.",
-	'문제 발생시 네 탓 보단 문제인식과 대안마련으로 함께 해결해요.',
-	'안전만큼은 참견과 참여가 항상 참이에요.',
-	'솔선수범, 우리 모두의 역할이에요.',
-	'과거 해오던 방식은 참고만 하세요. 새로운 접근은 변화의 시작이에요.',
+	// '어려운 일 있어요? 말 한마디가 우리문화를 바꿔요.',
+	// '교육은 서로를 든든한 업무파트너로 만드는 지름길, 적극 권장해요.',
+	// '보고 또 봐도 그 보고예요.',
+	// '근무는 유연하게, 업무는 확실하게 해내요.',
+	// "쏘지 마세요. 같은 편이에요. 우리의 조직은 팀이 아니라 '현대제철' 이에요.",
+	// '문제 발생시 네 탓 보단 문제인식과 대안마련으로 함께 해결해요.',
+	// '안전만큼은 참견과 참여가 항상 참이에요.',
+	// '솔선수범, 우리 모두의 역할이에요.',
+	// '과거 해오던 방식은 참고만 하세요. 새로운 접근은 변화의 시작이에요.',
 ];
 
 const TPROBLEM = [
@@ -62,11 +62,16 @@ const Home = ({ user }) => {
 	const [text, setText] = useState('');
 	const [textError, setTextError] = useState(false);
 	const [complete, setComplete] = useState(false);
+	const [completeSheet, setCompleteSheet] = useState(false);
 
 	const timer = useRef();
 
 	const [problemIndex, setProblemIndex] = useState(0);
 	const [problemHistory, setProblemHistory] = useState([]);
+
+	useEffect(() => {
+		if (!complete) setCompleteSheet(false);
+	}, [complete]);
 
 	const onClickAction = () => {
 		setAction((prev) => {
@@ -208,15 +213,20 @@ const Home = ({ user }) => {
 	const setGoogleSheet = async ({ name, id, totalTime }) => {
 		const googleSheet = await getGoogleSheet();
 		const sheetsByIdElement = googleSheet.sheetsById[1881161720];
-		await sheetsByIdElement.addRow({
+		const result = await sheetsByIdElement.addRow({
 			name,
 			id,
 			totalTime,
 		});
+
+		if (result) {
+			setCompleteSheet(true);
+			alert('제철 레시피 등록 완료!');
+		}
 	};
 
 	const onClickComplete = async () => {
-		await setGoogleSheet({ ...user, totalTime });
+		if (!completeSheet) await setGoogleSheet({ ...user, totalTime });
 	};
 
 	return (
