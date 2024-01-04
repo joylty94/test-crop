@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef, forwardRef } from 'react';
+import React, { useState } from 'react';
 import Intro from '../components/intro';
 import Game from '../components/game';
 
 const Home = () => {
 	const [mode, setMode] = useState(false);
 	const [user, setUser] = useState({ name: '', id: '' });
+
 	return (
 		<>
 			{!mode ? (
@@ -15,4 +16,5 @@ const Home = () => {
 		</>
 	);
 };
+
 export default Home;

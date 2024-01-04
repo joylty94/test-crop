@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import styled from 'styled-components';
 import html2canvas from 'html2canvas';
 import Modal from 'react-modal';
+import { getGoogleSheet } from '../libs/googlesheet.js';
 
 const PROBLEM = [
 	'업무지시는 명확하게, 회의는 간결하게, 질문은 자유롭게 해요.',
@@ -174,7 +175,7 @@ const Home = ({ user }) => {
 		};
 	});
 
-	const onClickComplete = () => {
+	const onClickComplete2 = () => {
 		const target = document.getElementById('target');
 		const place = document.getElementById('place');
 		const action = document.getElementById('action');
@@ -202,6 +203,20 @@ const Home = ({ user }) => {
 			link.click();
 			document.body.removeChild(link);
 		});
+	};
+
+	const setGoogleSheet = async ({ name, id, totalTime }) => {
+		const googleSheet = await getGoogleSheet();
+		const sheetsByIdElement = googleSheet.sheetsById[1881161720];
+		await sheetsByIdElement.addRow({
+			name,
+			id,
+			totalTime,
+		});
+	};
+
+	const onClickComplete = async () => {
+		await setGoogleSheet({ ...user, totalTime });
 	};
 
 	return (
@@ -271,7 +286,7 @@ const Home = ({ user }) => {
 										className='Home__complete-btn'
 										onClick={onClickComplete}
 									>
-										다운로드
+										완료
 									</button>
 								)}
 								<button
