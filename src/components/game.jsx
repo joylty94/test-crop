@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import styled from 'styled-components';
 import html2canvas from 'html2canvas';
-import Modal from 'react-modal';
+import Loader from '../components/loader.jsx';
 import { getGoogleSheet } from '../libs/googlesheet.js';
 
 const PROBLEM = [
 	'업무지시는 명확하게, 회의는 간결하게, 질문은 자유롭게 해요.',
-	// '어려운 일 있어요? 말 한마디가 우리문화를 바꿔요.',
-	// '교육은 서로를 든든한 업무파트너로 만드는 지름길, 적극 권장해요.',
-	// '보고 또 봐도 그 보고예요.',
-	// '근무는 유연하게, 업무는 확실하게 해내요.',
-	// "쏘지 마세요. 같은 편이에요. 우리의 조직은 팀이 아니라 '현대제철' 이에요.",
-	// '문제 발생시 네 탓 보단 문제인식과 대안마련으로 함께 해결해요.',
-	// '안전만큼은 참견과 참여가 항상 참이에요.',
-	// '솔선수범, 우리 모두의 역할이에요.',
-	// '과거 해오던 방식은 참고만 하세요. 새로운 접근은 변화의 시작이에요.',
+	'어려운 일 있어요? 말 한마디가 우리문화를 바꿔요.',
+	'교육은 서로를 든든한 업무파트너로 만드는 지름길, 적극 권장해요.',
+	'보고 또 봐도 그 보고예요.',
+	'근무는 유연하게, 업무는 확실하게 해내요.',
+	"쏘지 마세요. 같은 편이에요. 우리의 조직은 팀이 아니라 '현대제철' 이에요.",
+	'문제 발생시 네 탓 보단 문제인식과 대안마련으로 함께 해결해요.',
+	'안전만큼은 참견과 참여가 항상 참이에요.',
+	'솔선수범, 우리 모두의 역할이에요.',
+	'과거 해오던 방식은 참고만 하세요. 새로운 접근은 변화의 시작이에요.',
 ];
 
 const TPROBLEM = [
@@ -39,17 +39,6 @@ const TPROBLEM = [
 	/^(?:[ㄱ고과])?(?:[ㄱ거])?(?:[\s])?(?:[ㅎ해])?(?:[ㅇ오])?(?:[ㄷ더던])?(?:[\s])?(?:[ㅂ바방])?(?:[ㅅ시식])?(?:[ㅇ으은])?(?:[\s])?(?:[ㅊ차참])?(?:[ㄱ고])?(?:[ㅁ마만])?(?:[\s])?(?:[ㅎ하항])?(?:[ㅅ세])?(?:[ㅇ요])?(?:[.])?(?:[\s])?(?:[ㅅ새])?(?:[ㄹ로])?(?:[ㅇ우운])?(?:[\s])?(?:[ㅈ저접])?(?:[ㄱ그근])?(?:[ㅇ으은])?(?:[\s])?(?:[ㅂ벼변])?(?:[ㅎ호화])?(?:[ㅇ으의])?(?:[\s])?(?:[ㅅ시])?(?:[ㅈ자작])?(?:[ㅇ이])?(?:[ㅇ에])?(?:[ㅇ요])?(?:[.])?$/,
 ];
 
-const customStyles = {
-	content: {
-		top: '50%',
-		left: '50%',
-		right: 'auto',
-		bottom: 'auto',
-		marginRight: '-50%',
-		transform: 'translate(-50%, -50%)',
-	},
-};
-
 const Home = ({ user }) => {
 	const isBrowserDarkMode =
 		window.matchMedia &&
@@ -63,6 +52,8 @@ const Home = ({ user }) => {
 	const [textError, setTextError] = useState(false);
 	const [complete, setComplete] = useState(false);
 	const [completeSheet, setCompleteSheet] = useState(false);
+
+	const [loading, setLoading] = useState(false);
 
 	const timer = useRef();
 
@@ -211,6 +202,7 @@ const Home = ({ user }) => {
 	};
 
 	const setGoogleSheet = async ({ name, id, totalTime }) => {
+		setLoading(true);
 		const googleSheet = await getGoogleSheet();
 		const sheetsByIdElement = googleSheet.sheetsById[1881161720];
 		const result = await sheetsByIdElement.addRow({
@@ -221,8 +213,9 @@ const Home = ({ user }) => {
 
 		if (result) {
 			setCompleteSheet(true);
-			alert('제철 레시피 등록 완료!');
+			alert('제철 레시피 접수 완료!');
 		}
+		setLoading(false);
 	};
 
 	const onClickComplete = async () => {
@@ -261,7 +254,7 @@ const Home = ({ user }) => {
 								}
 								autoComplete='off'
 							/>
-							<button onClick={onClickKeyPress}>입력</button>
+							{/* <button onClick={onClickKeyPress}>입력</button> */}
 						</div>
 						{textError && (
 							<div className='Home__text-error'>
@@ -296,7 +289,7 @@ const Home = ({ user }) => {
 										className='Home__complete-btn'
 										onClick={onClickComplete}
 									>
-										완료
+										{completeSheet ? '접수 완료' : '완료'}
 									</button>
 								)}
 								<button
@@ -317,6 +310,8 @@ const Home = ({ user }) => {
 			</div>
 
 			<img className='Homg__back' alt='백그라운드' src='/bg.png' />
+
+			<Loader loading={loading} />
 		</HomeWrap>
 	);
 };
@@ -496,10 +491,8 @@ const HomeWrap = styled.div`
 		transition: all 0.3s ease;
 		position: relative;
 		display: inline-block;
-		box-shadow:
-			inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
-			7px 7px 20px 0px rgba(0, 0, 0, 0.1),
-			4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+		box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+			7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
 		outline: none;
 	}
 
@@ -520,8 +513,7 @@ const HomeWrap = styled.div`
 		width: 2px;
 	}
 	.btn-2:hover {
-		box-shadow:
-			4px 4px 6px 0 rgba(255, 255, 255, 0.5),
+		box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.5),
 			-4px -4px 6px 0 rgba(116, 125, 136, 0.5),
 			inset -4px -4px 6px 0 rgba(255, 255, 255, 0.2),
 			inset 4px 4px 6px 0 rgba(0, 0, 0, 0.4);
