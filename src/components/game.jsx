@@ -230,7 +230,7 @@ const Home = ({ user }) => {
 		const sheetsByIdElement = googleSheet.sheetsById[1881161720];
 		const result = await sheetsByIdElement.addRow({
 			name,
-			id,
+			id: id.toString(),
 			totalTime: secondsFormatTime(totalTime),
 			date: moment().format('LLLL'),
 		});
