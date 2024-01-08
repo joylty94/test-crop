@@ -313,7 +313,7 @@ const Home = ({ user }) => {
 										className='Home__complete-btn'
 										onClick={onClickComplete}
 									>
-										{completeSheet ? '저장 완료' : '저장'}
+										{completeSheet ? '접수완료' : '접수'}
 									</button>
 								)}
 								<button
