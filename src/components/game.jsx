@@ -231,7 +231,7 @@ const Home = ({ user }) => {
 		const result = await sheetsByIdElement.addRow({
 			name,
 			id,
-			totalTime: timeFormat2(totalTime),
+			totalTime: secondsFormatTime(totalTime),
 			date: moment().format('LLLL'),
 		});
 
