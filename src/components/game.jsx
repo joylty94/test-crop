@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import html2canvas from 'html2canvas';
 import Loader from '../components/loader.jsx';
 import { getGoogleSheet } from '../libs/googlesheet.js';
+import moment from 'moment';
+import 'moment/locale/ko';
 
 const PROBLEM = [
 	'업무지시는 명확하게, 회의는 간결하게, 질문은 자유롭게 해요.',
@@ -95,7 +97,7 @@ const Home = ({ user }) => {
 				// @ts-ignore
 				setProblemHistory((prev) => [
 					...prev,
-					{ content: `${text} - ${time}초 성공`, time },
+					{ content: `${text} - ${secondsFormatTime(time)}초 성공`, time },
 				]);
 				setText('');
 				setTime(0);
@@ -129,17 +131,38 @@ const Home = ({ user }) => {
 		}
 	};
 
-	const timeFormat = (seconds) => {
-		let hours = Math.floor(seconds / 3600);
-		let minutes = Math.floor((seconds % 3600) / 60);
-		let remainingSeconds = seconds % 60;
+	const timeFormat = (tenthOfSeconds) => {
+		let totalSeconds = Math.floor(tenthOfSeconds / 100); // 총 초 계산
+		let hours = Math.floor(totalSeconds / 3600); // 전체 시간 중 시간 계산
+		let minutes = Math.floor((totalSeconds % 3600) / 60); // 남은 시간 중 분 계산
+		let seconds = totalSeconds % 60; // 남은 시간 중 초 계산
 
 		let hoursFormatted = hours.toString().padStart(2, '0');
 		let minutesFormatted = minutes.toString().padStart(2, '0');
-		let secondsFormatted = remainingSeconds.toString().padStart(2, '0');
+		let secondsFormatted = seconds.toString().padStart(2, '0');
 
 		return `${hoursFormatted}:${minutesFormatted}:${secondsFormatted}`;
 	};
+	const timeFormat2 = (tenthOfSeconds) => {
+		let totalSeconds = Math.floor(tenthOfSeconds / 100); // 총 초 계산
+		let hours = Math.floor(totalSeconds / 3600); // 전체 시간 중 시간 계산
+		let minutes = Math.floor((totalSeconds % 3600) / 60); // 남은 시간 중 분 계산
+		let seconds = totalSeconds % 60; // 남은 시간 중 초 계산
+		let hundredths = tenthOfSeconds % 100; // 백분의 일 초
+
+		let hoursFormatted = hours.toString().padStart(2, '0');
+		let minutesFormatted = minutes.toString().padStart(2, '0');
+		let secondsFormatted = seconds.toString().padStart(2, '0');
+		let hundredthsFormatted = hundredths.toString().padStart(2, '0');
+
+		return `${hoursFormatted}:${minutesFormatted}:${secondsFormatted}:${hundredthsFormatted}`;
+	};
+
+	function secondsFormatTime(hundredthsOfSeconds) {
+		let seconds = hundredthsOfSeconds / 100; // 백분의 일초 단위 값을 초 단위로 변환
+
+		return seconds.toFixed(2); // 소수점 두 자리까지의 초를 문자열로 반환
+	}
 
 	useEffect(() => {
 		const editor = document.getElementById('editor');
@@ -153,7 +176,7 @@ const Home = ({ user }) => {
 			timer.current = setInterval(() => {
 				setTime((prev) => prev + 1);
 				setTotalTime((prev) => prev + 1);
-			}, 1000);
+			}, 10);
 			editor.focus();
 		}
 		return () => {
@@ -208,7 +231,8 @@ const Home = ({ user }) => {
 		const result = await sheetsByIdElement.addRow({
 			name,
 			id,
-			totalTime,
+			totalTime: timeFormat2(totalTime),
+			date: moment().format('LLLL'),
 		});
 
 		if (result) {
@@ -491,10 +515,8 @@ const HomeWrap = styled.div`
 		transition: all 0.3s ease;
 		position: relative;
 		display: inline-block;
-		box-shadow:
-			inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
-			7px 7px 20px 0px rgba(0, 0, 0, 0.1),
-			4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+		box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+			7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
 		outline: none;
 	}
 
@@ -515,8 +537,7 @@ const HomeWrap = styled.div`
 		width: 2px;
 	}
 	.btn-2:hover {
-		box-shadow:
-			4px 4px 6px 0 rgba(255, 255, 255, 0.5),
+		box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.5),
 			-4px -4px 6px 0 rgba(116, 125, 136, 0.5),
 			inset -4px -4px 6px 0 rgba(255, 255, 255, 0.2),
 			inset 4px 4px 6px 0 rgba(0, 0, 0, 0.4);
