@@ -289,7 +289,7 @@ const Home = ({ user }) => {
 										className='Home__complete-btn'
 										onClick={onClickComplete}
 									>
-										{completeSheet ? '접수 완료' : '완료'}
+										{completeSheet ? '저장 완료' : '저장'}
 									</button>
 								)}
 								<button
@@ -491,8 +491,10 @@ const HomeWrap = styled.div`
 		transition: all 0.3s ease;
 		position: relative;
 		display: inline-block;
-		box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
-			7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+		box-shadow:
+			inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+			7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+			4px 4px 5px 0px rgba(0, 0, 0, 0.1);
 		outline: none;
 	}
 
@@ -513,7 +515,8 @@ const HomeWrap = styled.div`
 		width: 2px;
 	}
 	.btn-2:hover {
-		box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.5),
+		box-shadow:
+			4px 4px 6px 0 rgba(255, 255, 255, 0.5),
 			-4px -4px 6px 0 rgba(116, 125, 136, 0.5),
 			inset -4px -4px 6px 0 rgba(255, 255, 255, 0.2),
 			inset 4px 4px 6px 0 rgba(0, 0, 0, 0.4);
